@@ -17,7 +17,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void register(String accountId, CategoryDTO categoryDTO) {
         if (accountId != null) {
-            categoryMapper.register(categoryDTO);
+            try{
+                categoryMapper.register(categoryDTO);
+            }catch (RuntimeException e){
+                log.error("register", e);
+                throw new RuntimeException("카테고리 등록 메서드를 확인해 주세요"+categoryDTO, e);
+            }
         } else {
             log.error("register ERROR! {}", categoryDTO);
             throw new RuntimeException("register ERROR! 상품 카테고리 등록 메서드를 확인해주세요\n" + "Params : " + categoryDTO);
