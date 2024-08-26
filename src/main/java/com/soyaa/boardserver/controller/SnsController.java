@@ -1,14 +1,12 @@
 package com.soyaa.boardserver.controller;
 
 import com.soyaa.boardserver.config.AwsConfig;
+import com.soyaa.boardserver.service.SlackService;
 import com.soyaa.boardserver.service.SnsService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.*;
@@ -20,10 +18,12 @@ import java.util.Map;
 public class SnsController {
     private final AwsConfig awsConfig;
     private final SnsService snsService;
+    private final SlackService slackService;
 
-    public SnsController(AwsConfig awsConfig, SnsService snsService) {
+    public SnsController(AwsConfig awsConfig, SnsService snsService, SlackService slackService) {
         this.awsConfig = awsConfig;
         this.snsService = snsService;
+        this.slackService = slackService;
     }
 
     @PostMapping("/create-topic")
@@ -80,5 +80,11 @@ public class SnsController {
         snsClient.close();
 
         return publishResponse.messageId();
+    }
+
+    //slack
+    @GetMapping("/slack/error")
+    public void error(){
+        slackService.sendSlackMessage("게시판 에러야 으트게에ㅔㅔㅔㅔ","error");
     }
 }
